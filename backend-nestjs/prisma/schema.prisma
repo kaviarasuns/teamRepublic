@@ -9,3 +9,53 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model State{
+  state_id Int @id @default(autoincrement())
+  state_name DateTime
+
+  constituency Constituency[]
+}
+
+model Constituency {
+  constituency_id Int @id @default(autoincrement())
+  constituency_name String
+
+  electionResults ElectionResults[]
+
+  state State @relation(fields: [state_id], references: [state_id])
+  state_id Int
+}
+
+model Party {
+  party_id Int @id @default(autoincrement())
+  party_name String
+  party_symbol String
+
+  electionResults ElectionResults[]
+}
+
+model Candidate {
+  candidate_id Int @id @default(autoincrement())
+  constituency_id Int
+  candidate_name String
+
+  electionResults ElectionResults[]
+}
+
+model ElectionResults {
+  result_id Int @id @default(autoincrement())
+  year Int
+  votes_received Int
+  election_type String
+  
+  party Party @relation(fields: [party_id], references: [party_id])
+  party_id Int
+
+  candidate Candidate @relation(fields: [candidate_id], references: [candidate_id])
+  candidate_id Int
+
+  constituency Constituency @relation(fields: [constituency_id], references: [constituency_id])
+  constituency_id Int
+}
